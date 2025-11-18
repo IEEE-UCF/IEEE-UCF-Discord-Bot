@@ -20,7 +20,7 @@ export class HelpCommand extends Command {
                 .setThumbnail(this.client.user?.displayAvatarURL() ?? null)
                 .setTitle(`${this.client.user?.username ?? 'Larry'} Help`)
                 .setDescription([
-                    `hello twin`,
+                    `hello twin...`,
                 ].join('\n'))
                 .setFooter({
                     text: `Requested by ${interaction.user.username} • ${this.client.config.embed.footer}`,
