@@ -6,7 +6,7 @@ export class EventsCommand extends Command {
 	constructor(client: any) {
 		super(client, {
 			name: 'events',
-			description: 'Lists all the events coming up on the calendar.',
+			description: 'Lists all the upcoming club events.',
 			usage: 'events',
 			category: 'general',
 			permissionLevel: PermissionLevel.GUEST,
@@ -25,53 +25,63 @@ export class EventsCommand extends Command {
 				return;
 			}
 
+			// Filter events to only show those in the next 7 days
+			const now = new Date();
+			const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+			const eventsThisWeek = events.filter((event: any) => {
+				const eventDate = event.start as Date;
+				return eventDate >= now && eventDate <= oneWeekFromNow;
+			});
+
+			if (eventsThisWeek.length === 0) {
+				await interaction.editReply('There are no events scheduled in the next week.');
+				return;
+			}
+
 			const durationString = (seconds: number): string => {
 				const days = Math.floor(seconds / 86400);
 				const hrs = Math.floor((seconds % 86400) / 3600);
 				const mins = Math.floor((seconds % 3600) / 60);
-				const secs = seconds % 60;
 				let result = '';
 				if (days > 0) result += `${days}d `;
 				if (hrs > 0) result += `${hrs}h `;
-				if (mins > 0) result += `${mins}m `;
-				if (secs > 0) result += `${secs}s`;
-				return result.trim();
+				if (mins > 0) result += `${mins}m`;
+				return result.trim() || '<1m';
 			};
 
-			const embeds = [];
-			// Limit to first 10 events (Discord's embed limit per message)
-			const upcomingEvents = events.slice(0, 10);
+			// Limit to first 5 events
+			const upcomingEvents = eventsThisWeek.slice(0, 5);
+
+			const embed = new EmbedBuilder()
+				.setTitle('📅 Events This Week')
+				.setColor(this.client.config.embed.color)
+				.setTimestamp()
+				.setFooter({ text: `Showing ${upcomingEvents.length} of ${eventsThisWeek.length} event${eventsThisWeek.length !== 1 ? 's' : ''}` });
 
 			for (const event of upcomingEvents) {
 				const duration = event.end && event.start
 					? Math.floor(((event.end as Date).getTime() - (event.start as Date).getTime()) / 1000)
 					: null;
 
-				const embed = new EmbedBuilder()
-					.setTitle(event.summary ?? 'Untitled Event')
-					.addFields(
-						{
-							name: 'Location',
-							value: event.location ? event.location.toString() : 'N/A',
-						},
-						{
-							name: 'Scheduled for',
-							value: time(event.start as Date, TimestampStyles.LongDateTime),
-							inline: true,
-						},
-						{
-							name: 'Duration',
-							value: duration ? durationString(duration) : 'N/A',
-							inline: true,
-						},
-					)
-					.setColor(this.client.config.embed.color)
-					.setTimestamp();
+				const eventDate = time(event.start as Date, TimestampStyles.ShortDateTime);
+				const relativeTime = time(event.start as Date, TimestampStyles.RelativeTime);
+				const location = event.location ? `📍 ${event.location}` : '📍 TBA';
+				const durationText = duration ? `⏱️ ${durationString(duration)}` : '';
 
-				embeds.push(embed);
+				const fieldValue = [
+					`${eventDate} (${relativeTime})`,
+					location,
+					durationText,
+				].filter(Boolean).join('\n');
+
+				embed.addFields({
+					name: event.summary ?? 'Untitled Event',
+					value: fieldValue,
+					inline: false,
+				});
 			}
 
-			await interaction.editReply({ content: null, embeds });
+			await interaction.editReply({ embeds: [embed] });
 		} catch (error) {
 			this.client.logger.fail(`Error fetching calendar events: ${error}`);
 			await interaction.editReply('An error occurred while fetching events. Please try again later.');
