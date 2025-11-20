@@ -121,17 +121,33 @@ export class Database {
 	}
 
 	/**
-	 * Get member by email
+	 * Get member by personal email
 	 */
-	async getMemberByEmail(email: string): Promise<Member | null> {
+	async getMemberByPersonalEmail(email: string): Promise<Member | null> {
 		try {
 			const members = await this.db.select()
 				.from(schema.Members)
-				.where(eq(schema.Members.email, email.toLowerCase()))
+				.where(eq(schema.Members.personalEmail, email.toLowerCase()))
 				.limit(1);
 			return members[0] ?? null;
 		} catch (error) {
-			console.error('Error getting member by email:', error);
+			console.error('Error getting member by personal email:', error);
+			return null;
+		}
+	}
+
+	/**
+	 * Get member by UCF email
+	 */
+	async getMemberByUcfEmail(email: string): Promise<Member | null> {
+		try {
+			const members = await this.db.select()
+				.from(schema.Members)
+				.where(eq(schema.Members.ucfEmail, email.toLowerCase()))
+				.limit(1);
+			return members[0] ?? null;
+		} catch (error) {
+			console.error('Error getting member by UCF email:', error);
 			return null;
 		}
 	}
@@ -143,7 +159,8 @@ export class Database {
 		try {
 			const members = await this.db.insert(schema.Members).values({
 				...data,
-				email: data.email?.toLowerCase(), // Normalize email
+				personalEmail: data.personalEmail?.toLowerCase(),
+				ucfEmail: data.ucfEmail?.toLowerCase(),
 			}).returning();
 			return members[0] ?? null;
 		} catch (error) {
@@ -157,13 +174,33 @@ export class Database {
 	 */
 	async updateMemberByDiscordId(discordId: string, data: Partial<NewMember>): Promise<Member | null> {
 		try {
+			const updateData: any = { ...data, updatedAt: new Date() };
+			if (data.personalEmail) updateData.personalEmail = data.personalEmail.toLowerCase();
+			if (data.ucfEmail) updateData.ucfEmail = data.ucfEmail.toLowerCase();
+
 			const members = await this.db.update(schema.Members)
-				.set({
-					...data,
-					email: data.email?.toLowerCase(), // Normalize email if provided
-					updatedAt: new Date(),
-				})
+				.set(updateData)
 				.where(eq(schema.Members.discordID, discordId))
+				.returning();
+			return members[0] ?? null;
+		} catch (error) {
+			console.error('Error updating member:', error);
+			return null;
+		}
+	}
+
+	/**
+	 * Update member by ID
+	 */
+	async updateMember(id: string, data: Partial<NewMember>): Promise<Member | null> {
+		try {
+			const updateData: any = { ...data, updatedAt: new Date() };
+			if (data.personalEmail) updateData.personalEmail = data.personalEmail.toLowerCase();
+			if (data.ucfEmail) updateData.ucfEmail = data.ucfEmail.toLowerCase();
+
+			const members = await this.db.update(schema.Members)
+				.set(updateData)
+				.where(eq(schema.Members.id, id))
 				.returning();
 			return members[0] ?? null;
 		} catch (error) {
@@ -197,7 +234,8 @@ export class Database {
 				.where(or(
 					ilike(schema.Members.firstName, searchTerm),
 					ilike(schema.Members.lastName, searchTerm),
-					ilike(schema.Members.email, searchTerm),
+					ilike(schema.Members.personalEmail, searchTerm),
+					ilike(schema.Members.ucfEmail, searchTerm),
 					ilike(schema.Members.discordID, searchTerm),
 				))
 				.orderBy(asc(schema.Members.firstName), asc(schema.Members.lastName))
@@ -332,7 +370,7 @@ export class Database {
 	/**
 	 * Get members by officer role
 	 */
-	async getMembersByOfficerRole(role: 'executive_chair' | 'executive_vice_chair' | 'executive_secretary' | 'executive_treasurer' | 'committee_lead'): Promise<Member[]> {
+	async getMembersByOfficerRole(role: 'Executive Chair' | 'Vice Chair' | 'Treasurer' | 'Secretary' | 'Project Chair' | 'Workshop Chair' | 'Conference Chair' | 'Outreach Chair' | 'Service Chair' | 'Social Chair' | 'Professional Development Chair' | 'Marketing Chair' | 'Software Chair'): Promise<Member[]> {
 		try {
 			return await this.db.select()
 				.from(schema.Members)
@@ -380,7 +418,7 @@ export class Database {
 	 */
 	async getUpcomingEvents(limit: number = 20): Promise<Event[]> {
 		try {
-			const now = new Date();
+			const now = new Date().toISOString();
 			return await this.db.select()
 				.from(schema.Events)
 				.where(gte(schema.Events.startTime, now))
@@ -397,7 +435,7 @@ export class Database {
 	 */
 	async getPastEvents(limit: number = 20): Promise<Event[]> {
 		try {
-			const now = new Date();
+			const now = new Date().toISOString();
 			return await this.db.select()
 				.from(schema.Events)
 				.where(lte(schema.Events.startTime, now))
@@ -427,6 +465,37 @@ export class Database {
 		} catch (error) {
 			console.error('Error searching events:', error);
 			return [];
+		}
+	}
+
+	/**
+	 * Update event by ID
+	 */
+	async updateEvent(id: string, data: Partial<NewEvent>): Promise<Event | null> {
+		try {
+			const updateData: any = { ...data, updatedAt: new Date().toISOString() };
+			const events = await this.db.update(schema.Events)
+				.set(updateData)
+				.where(eq(schema.Events.id, id))
+				.returning();
+			return events[0] ?? null;
+		} catch (error) {
+			console.error('Error updating event:', error);
+			return null;
+		}
+	}
+
+	/**
+	 * Delete event by ID
+	 */
+	async deleteEvent(id: string): Promise<boolean> {
+		try {
+			await this.db.delete(schema.Events)
+				.where(eq(schema.Events.id, id));
+			return true;
+		} catch (error) {
+			console.error('Error deleting event:', error);
+			return false;
 		}
 	}
 
@@ -537,6 +606,37 @@ export class Database {
 		}
 	}
 
+	/**
+	 * Update committee by ID
+	 */
+	async updateCommittee(id: string, data: Partial<NewCommittee>): Promise<Committee | null> {
+		try {
+			const updateData: any = { ...data, updatedAt: new Date() };
+			const committees = await this.db.update(schema.Committees)
+				.set(updateData)
+				.where(eq(schema.Committees.id, id))
+				.returning();
+			return committees[0] ?? null;
+		} catch (error) {
+			console.error('Error updating committee:', error);
+			return null;
+		}
+	}
+
+	/**
+	 * Delete committee by ID
+	 */
+	async deleteCommittee(id: string): Promise<boolean> {
+		try {
+			await this.db.delete(schema.Committees)
+				.where(eq(schema.Committees.id, id));
+			return true;
+		} catch (error) {
+			console.error('Error deleting committee:', error);
+			return false;
+		}
+	}
+
 	// ==================== PROJECT METHODS ====================
 
 	/**
@@ -633,6 +733,37 @@ export class Database {
 		}
 	}
 
+	/**
+	 * Update project by ID
+	 */
+	async updateProject(id: string, data: Partial<NewProject>): Promise<Project | null> {
+		try {
+			const updateData: any = { ...data, updatedAt: new Date() };
+			const projects = await this.db.update(schema.Projects)
+				.set(updateData)
+				.where(eq(schema.Projects.id, id))
+				.returning();
+			return projects[0] ?? null;
+		} catch (error) {
+			console.error('Error updating project:', error);
+			return null;
+		}
+	}
+
+	/**
+	 * Delete project by ID
+	 */
+	async deleteProject(id: string): Promise<boolean> {
+		try {
+			await this.db.delete(schema.Projects)
+				.where(eq(schema.Projects.id, id));
+			return true;
+		} catch (error) {
+			console.error('Error deleting project:', error);
+			return false;
+		}
+	}
+
 	// ==================== SPONSORSHIP METHODS ====================
 
 	/**
@@ -667,7 +798,7 @@ export class Database {
 	/**
 	 * Get sponsorships by tier
 	 */
-	async getSponsorshipsByTier(tier: 'bronze' | 'silver' | 'gold'): Promise<Sponsorship[]> {
+	async getSponsorshipsByTier(tier: 'Bronze' | 'Silver' | 'Gold'): Promise<Sponsorship[]> {
 		try {
 			return await this.db.select()
 				.from(schema.Sponsorships)
@@ -675,6 +806,21 @@ export class Database {
 				.orderBy(desc(schema.Sponsorships.moneyDonated));
 		} catch (error) {
 			console.error('Error getting sponsorships by tier:', error);
+			return [];
+		}
+	}
+
+	/**
+	 * Get active sponsorships
+	 */
+	async getActiveSponsorships(): Promise<Sponsorship[]> {
+		try {
+			return await this.db.select()
+				.from(schema.Sponsorships)
+				.where(eq(schema.Sponsorships.active, true))
+				.orderBy(desc(schema.Sponsorships.moneyDonated));
+		} catch (error) {
+			console.error('Error getting active sponsorships:', error);
 			return [];
 		}
 	}
@@ -690,6 +836,37 @@ export class Database {
 		} catch (error) {
 			console.error('Error getting all sponsorships:', error);
 			return [];
+		}
+	}
+
+	/**
+	 * Update sponsorship by ID
+	 */
+	async updateSponsorship(id: string, data: Partial<NewSponsorship>): Promise<Sponsorship | null> {
+		try {
+			const updateData: any = { ...data, updatedAt: new Date() };
+			const sponsorships = await this.db.update(schema.Sponsorships)
+				.set(updateData)
+				.where(eq(schema.Sponsorships.id, id))
+				.returning();
+			return sponsorships[0] ?? null;
+		} catch (error) {
+			console.error('Error updating sponsorship:', error);
+			return null;
+		}
+	}
+
+	/**
+	 * Delete sponsorship by ID
+	 */
+	async deleteSponsorship(id: string): Promise<boolean> {
+		try {
+			await this.db.delete(schema.Sponsorships)
+				.where(eq(schema.Sponsorships.id, id));
+			return true;
+		} catch (error) {
+			console.error('Error deleting sponsorship:', error);
+			return false;
 		}
 	}
 
@@ -805,63 +982,6 @@ export class Database {
 		}
 	}
 
-	// ==================== EVENT HOST METHODS ====================
-
-	/**
-	 * Get events by host (club, committee, project, or member)
-	 */
-	async getEventsByHost(hostType: 'club' | 'committee' | 'project' | 'member', hostId?: string | null): Promise<Event[]> {
-		try {
-			if (hostType === 'club') {
-				return await this.db.select()
-					.from(schema.Events)
-					.where(eq(schema.Events.hostType, 'club'))
-					.orderBy(desc(schema.Events.startTime));
-			} else {
-				return await this.db.select()
-					.from(schema.Events)
-					.where(
-						sql`${schema.Events.hostType} = ${hostType} AND ${schema.Events.hostId} = ${hostId}`,
-					)
-					.orderBy(desc(schema.Events.startTime));
-			}
-		} catch (error) {
-			console.error('Error getting events by host:', error);
-			return [];
-		}
-	}
-
-	/**
-	 * Get upcoming events by host
-	 */
-	async getUpcomingEventsByHost(hostType: 'club' | 'committee' | 'project' | 'member', hostId?: string | null, limit: number = 20): Promise<Event[]> {
-		try {
-			const now = new Date();
-			if (hostType === 'club') {
-				return await this.db.select()
-					.from(schema.Events)
-					.where(
-						sql`${schema.Events.hostType} = 'club' AND ${schema.Events.startTime} >= ${now}`,
-					)
-					.orderBy(asc(schema.Events.startTime))
-					.limit(limit);
-			} else {
-				return await this.db.select()
-					.from(schema.Events)
-					.where(
-						sql`${schema.Events.hostType} = ${hostType} 
-							AND ${schema.Events.hostId} = ${hostId}
-							AND ${schema.Events.startTime} >= ${now}`,
-					)
-					.orderBy(asc(schema.Events.startTime))
-					.limit(limit);
-			}
-		} catch (error) {
-			console.error('Error getting upcoming events by host:', error);
-			return [];
-		}
-	}
-
 	/**
 	 * Get event by slug
 	 */
@@ -875,6 +995,252 @@ export class Database {
 		} catch (error) {
 			console.error('Error getting event by slug:', error);
 			return null;
+		}
+	}
+
+	/**
+	 * Get events by committee
+	 */
+	async getEventsByCommittee(committeeId: string): Promise<Event[]> {
+		try {
+			return await this.db.select()
+				.from(schema.Events)
+				.where(eq(schema.Events.committeeId, committeeId))
+				.orderBy(desc(schema.Events.startTime));
+		} catch (error) {
+			console.error('Error getting events by committee:', error);
+			return [];
+		}
+	}
+
+	/**
+	 * Get active events
+	 */
+	async getActiveEvents(): Promise<Event[]> {
+		try {
+			return await this.db.select()
+				.from(schema.Events)
+				.where(eq(schema.Events.active, true))
+				.orderBy(desc(schema.Events.startTime));
+		} catch (error) {
+			console.error('Error getting active events:', error);
+			return [];
+		}
+	}
+
+	// ==================== EVENT ATTENDEE METHODS ====================
+
+	/**
+	 * Add attendee to event
+	 */
+	async addEventAttendee(eventId: string, memberId: string): Promise<typeof schema.EventAttendees.$inferSelect | null> {
+		try {
+			const attendees = await this.db.insert(schema.EventAttendees).values({
+				eventId,
+				memberId,
+			}).returning();
+			return attendees[0] ?? null;
+		} catch (error) {
+			console.error('Error adding event attendee:', error);
+			return null;
+		}
+	}
+
+	/**
+	 * Remove attendee from event
+	 */
+	async removeEventAttendee(eventId: string, memberId: string): Promise<boolean> {
+		try {
+			await this.db.delete(schema.EventAttendees)
+				.where(
+					sql`${schema.EventAttendees.eventId} = ${eventId} AND ${schema.EventAttendees.memberId} = ${memberId}`,
+				);
+			return true;
+		} catch (error) {
+			console.error('Error removing event attendee:', error);
+			return false;
+		}
+	}
+
+	/**
+	 * Get all attendees for an event
+	 */
+	async getEventAttendees(eventId: string): Promise<(typeof schema.EventAttendees.$inferSelect & { member: Member })[]> {
+		try {
+			return await this.db.select()
+				.from(schema.EventAttendees)
+				.leftJoin(schema.Members, eq(schema.EventAttendees.memberId, schema.Members.id))
+				.where(eq(schema.EventAttendees.eventId, eventId));
+		} catch (error) {
+			console.error('Error getting event attendees:', error);
+			return [];
+		}
+	}
+
+	/**
+	 * Get attendee count for an event
+	 */
+	async getEventAttendeeCount(eventId: string): Promise<number> {
+		try {
+			const result = await this.db.select({ count: sql<number>`count(*)` })
+				.from(schema.EventAttendees)
+				.where(eq(schema.EventAttendees.eventId, eventId));
+			return result[0]?.count ?? 0;
+		} catch (error) {
+			console.error('Error getting event attendee count:', error);
+			return 0;
+		}
+	}
+
+	/**
+	 * Get all events a member has attended
+	 */
+	async getMemberAttendedEvents(memberId: string): Promise<Event[]> {
+		try {
+			const attendees = await this.db.select()
+				.from(schema.EventAttendees)
+				.leftJoin(schema.Events, eq(schema.EventAttendees.eventId, schema.Events.id))
+				.where(eq(schema.EventAttendees.memberId, memberId))
+				.orderBy(desc(schema.Events.startTime));
+			return attendees.map((a: any) => a.events).filter(Boolean) as Event[];
+		} catch (error) {
+			console.error('Error getting member attended events:', error);
+			return [];
+		}
+	}
+
+	/**
+	 * Check if member attended event
+	 */
+	async didMemberAttendEvent(eventId: string, memberId: string): Promise<boolean> {
+		try {
+			const attendees = await this.db.select()
+				.from(schema.EventAttendees)
+				.where(
+					sql`${schema.EventAttendees.eventId} = ${eventId} AND ${schema.EventAttendees.memberId} = ${memberId}`,
+				)
+				.limit(1);
+			return attendees.length > 0;
+		} catch (error) {
+			console.error('Error checking member attendance:', error);
+			return false;
+		}
+	}
+
+	// ==================== PROJECT MEMBER METHODS ====================
+
+	/**
+	 * Add member to project
+	 */
+	async addProjectMember(projectId: string, memberId: string, isLead: boolean = false): Promise<typeof schema.ProjectMembers.$inferSelect | null> {
+		try {
+			const projectMembers = await this.db.insert(schema.ProjectMembers).values({
+				projectId,
+				memberId,
+				isLead,
+			}).returning();
+			return projectMembers[0] ?? null;
+		} catch (error) {
+			console.error('Error adding project member:', error);
+			return null;
+		}
+	}
+
+	/**
+	 * Remove member from project
+	 */
+	async removeProjectMember(projectId: string, memberId: string): Promise<boolean> {
+		try {
+			await this.db.delete(schema.ProjectMembers)
+				.where(
+					sql`${schema.ProjectMembers.projectId} = ${projectId} AND ${schema.ProjectMembers.memberId} = ${memberId}`,
+				);
+			return true;
+		} catch (error) {
+			console.error('Error removing project member:', error);
+			return false;
+		}
+	}
+
+	/**
+	 * Get all members of a project
+	 */
+	async getProjectMembers(projectId: string): Promise<(typeof schema.ProjectMembers.$inferSelect & { member: Member })[]> {
+		try {
+			return await this.db.select()
+				.from(schema.ProjectMembers)
+				.leftJoin(schema.Members, eq(schema.ProjectMembers.memberId, schema.Members.id))
+				.where(eq(schema.ProjectMembers.projectId, projectId));
+		} catch (error) {
+			console.error('Error getting project members:', error);
+			return [];
+		}
+	}
+
+	/**
+	 * Get all projects a member is part of
+	 */
+	async getMemberProjects(memberId: string): Promise<Project[]> {
+		try {
+			const projectMembers = await this.db.select()
+				.from(schema.ProjectMembers)
+				.leftJoin(schema.Projects, eq(schema.ProjectMembers.projectId, schema.Projects.id))
+				.where(eq(schema.ProjectMembers.memberId, memberId));
+			return projectMembers.map((pm: any) => pm.projects).filter(Boolean) as Project[];
+		} catch (error) {
+			console.error('Error getting member projects:', error);
+			return [];
+		}
+	}
+
+	// ==================== COMMITTEE MEMBER METHODS ====================
+
+	/**
+	 * Add member to committee
+	 */
+	async addCommitteeMember(committeeId: string, memberId: string, isChair: boolean = false): Promise<typeof schema.CommitteeMembers.$inferSelect | null> {
+		try {
+			const committeeMembers = await this.db.insert(schema.CommitteeMembers).values({
+				committeeId,
+				memberId,
+				isChair,
+			}).returning();
+			return committeeMembers[0] ?? null;
+		} catch (error) {
+			console.error('Error adding committee member:', error);
+			return null;
+		}
+	}
+
+	/**
+	 * Remove member from committee
+	 */
+	async removeCommitteeMember(committeeId: string, memberId: string): Promise<boolean> {
+		try {
+			await this.db.delete(schema.CommitteeMembers)
+				.where(
+					sql`${schema.CommitteeMembers.committeeId} = ${committeeId} AND ${schema.CommitteeMembers.memberId} = ${memberId}`,
+				);
+			return true;
+		} catch (error) {
+			console.error('Error removing committee member:', error);
+			return false;
+		}
+	}
+
+	/**
+	 * Get all committees a member is part of
+	 */
+	async getMemberCommittees(memberId: string): Promise<Committee[]> {
+		try {
+			const committeeMembers = await this.db.select()
+				.from(schema.CommitteeMembers)
+				.leftJoin(schema.Committees, eq(schema.CommitteeMembers.committeeId, schema.Committees.id))
+				.where(eq(schema.CommitteeMembers.memberId, memberId));
+			return committeeMembers.map((cm: any) => cm.committees).filter(Boolean) as Committee[];
+		} catch (error) {
+			console.error('Error getting member committees:', error);
+			return [];
 		}
 	}
 
