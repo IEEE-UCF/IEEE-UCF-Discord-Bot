@@ -13,6 +13,6 @@ export class MessageCreateEvent extends Event {
 		// Ignore messages from bots
 		if (message.author?.bot) return;
 		// console.log(this);
-		await this.client.tomfoolery.speechBubbles(message);
+		await this.client.tomfoolery.trollResponse(message);
 	}
 }

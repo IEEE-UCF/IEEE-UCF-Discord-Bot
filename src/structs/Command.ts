@@ -5,7 +5,7 @@ import {
 	EmbedBuilder,
 } from 'discord.js';
 import type { PermissionResolvable } from 'discord.js';
-import { PermissionLevel } from '../modules/helpers/Utils.js';
+import { PermissionLevel } from '../modules/helpers/Utils.ts';
 
 export interface CommandOptions {
 	name: string;
