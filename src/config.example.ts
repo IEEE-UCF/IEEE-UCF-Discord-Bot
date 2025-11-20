@@ -35,7 +35,27 @@ interface Config {
 	intents: GatewayIntentBits[];
 	partials: Partials[];
 	tomfoolery: {
-		features: string[];
+		trollResponse: {
+			enabled: boolean;
+			default: {
+				responses: string[];
+				chance: number;
+				deleteTime: number;
+			};
+			members: Record<string, {
+				responses: string[];
+				chance: number;
+				deleteTime: number;
+			}>;
+			keywords: Record<string, {
+				responses: string[];
+				deleteTime: number;
+			}>;
+			disabled: {
+				channels: string[];
+				users: string[];
+			};
+		};
 	};
 	custom: Record<string, any>;
 }
@@ -108,7 +128,33 @@ const config: Config = {
 	],
 
 	tomfoolery: {
-		features: [],
+		trollResponse: {
+			enabled: false,
+			default: {
+				responses: [
+					'https://tenor.com/view/speech-bubble-speech-dog-meme-gif-25299613',
+				],
+				chance: 0.1,
+				deleteTime: 500,
+			},
+			members: {
+				// 'MEMBER_ID_HERE': {
+				// 	responses: ['no way', 'stop it', 'https://example.com/gif1.gif'],
+				// 	chance: 0.1,
+				// 	deleteTime: 500,
+				// },
+			},
+			keywords: {
+				// keyword: {
+				// 	responses: ['triggered!', 'https://example.com/gif.gif'],
+				// 	deleteTime: 1000,
+				// },
+			},
+			disabled: {
+				channels: [],
+				users: [],
+			},
+		},
 	},
 
 	custom: {},

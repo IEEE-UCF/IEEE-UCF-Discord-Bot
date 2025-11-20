@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
-import { Command } from '../../structs/Command.js';
-import { PermissionLevel } from '../../modules/helpers/Utils.js';
+import { Command } from '../../structs/Command.ts';
+import { PermissionLevel } from '../../modules/helpers/Utils.ts';
 
 export class ShutdownCommand extends Command {
 	constructor(client: any) {

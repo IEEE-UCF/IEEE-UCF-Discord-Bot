@@ -3,14 +3,14 @@ import { glob } from 'glob';
 import { pathToFileURL } from 'url';
 import path from 'path';
 import { eq } from 'drizzle-orm';
-import config from '../config.js';
-import logger from '../modules/helpers/Logger.js';
-import { Database } from '../modules/database/Database.js';
-import { Calendar } from '../modules/calendar/main.js';
-import { Utils, PermissionLevel } from '../modules/helpers/Utils.js';
-import * as schema from '../modules/database/Schema.js';
-import { Command } from './Command.js';
-import { Event } from './Event.js';
+import config from '../config.ts';
+import logger from '../modules/helpers/Logger.ts';
+import { Database } from '../modules/database/Database.ts';
+import { Calendar } from '../modules/calendar/main.ts';
+import { Utils, PermissionLevel } from '../modules/helpers/Utils.ts';
+import * as schema from '../modules/database/Schema.ts';
+import { Command } from './Command.ts';
+import { Event } from './Event.ts';
 import { Tomfoolery } from '../modules/tomfoolery/main.ts';
 
 interface CachedPermission {

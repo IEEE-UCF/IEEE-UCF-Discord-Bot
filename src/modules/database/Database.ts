@@ -38,10 +38,23 @@ export class Database {
 			this.isConnected = true;
 			this.client?.logger?.startup('Connected to PostgreSQL database!');
 			return true;
-		} catch (error) {
+		} catch (error: any) {
 			this.isConnected = false;
 			this.client?.logger?.fail('Error connecting to database.');
-			console.error('Database connection error:', error);
+
+			// Log detailed error information
+			if (error.code === '28P01') {
+				this.client?.logger?.fail('Database authentication failed: Invalid username or password.');
+			} else if (error.code === 'ECONNREFUSED') {
+				this.client?.logger?.fail('Database connection refused: Is PostgreSQL running?');
+			} else if (error.code === 'ENOTFOUND') {
+				this.client?.logger?.fail('Database host not found: Check your connection string.');
+			} else if (error.code === 'ETIMEDOUT') {
+				this.client?.logger?.fail('Database connection timeout: Check your network or firewall settings.');
+			} else {
+				this.client?.logger?.fail(`Database error (${error.code ?? 'UNKNOWN'}): ${error.message ?? 'Unknown error'}`);
+			}
+
 			return false;
 		}
 	}
