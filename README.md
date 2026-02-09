@@ -1,4 +1,4 @@
-# Larry - IEEE@UCF Discord Bot
+# IEEE@UCF Discord Bot (f.k.a. Larry)
 
 A silly Discord bot built with TypeScript, Bun, and Discord.js for the IEEE@UCF community.
 
