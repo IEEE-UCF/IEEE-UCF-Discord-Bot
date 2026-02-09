@@ -14,7 +14,7 @@ A silly Discord bot built with TypeScript, Bun, and Discord.js for the IEEE@UCF 
 
 ### Local Development
 
-1. Clone the repo: `git clone https://github.com/IEEE-UCF/Larry.git && cd Larry`
+1. Clone the repo: `git clone https://github.com/IEEE-UCF/IEEE-UCF-Discord-Bot.git && cd IEEE-UCF-Discord-Bot`
 2. Install dependencies: `bun install`
 3. Copy config: `cp src/config.example.ts src/config.ts` (then edit as needed)
 4. Start dev server: `bun run dev`

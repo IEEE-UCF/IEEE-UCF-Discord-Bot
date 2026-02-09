@@ -1,7 +1,7 @@
 services:
-  larry:
+  IEEE-UCF-Discord-Bot:
     build: .
-    container_name: larry-bot
+    container_name: IEEE-UCF-Discord-Bot
     restart: unless-stopped
     environment:
       - NODE_ENV=production
@@ -12,7 +12,7 @@ services:
       # Mount logs directory (if you want persistent logs)
       - ./logs:/app/logs
     networks:
-      - larry-network
+      - bot-network
     # Optional: Resource limits
     deploy:
       resources:
@@ -24,25 +24,25 @@ services:
           cpus: '0.25'
 
 networks:
-  larry-network:
+  bot-network:
     driver: bridge
 
 # Optional: If you want to run PostgreSQL locally alongside the bot
 # (Remove this if you're using an external database)
   # postgres:
   #   image: postgres:16-alpine
-  #   container_name: larry-postgres
+  #   container_name: bot-postgres
   #   restart: unless-stopped
   #   environment:
-  #     POSTGRES_DB: larrydb
-  #     POSTGRES_USER: ${POSTGRES_USER:-larry}
+  #     POSTGRES_DB: IEEE-UCF-Discord-Bot-db
+  #     POSTGRES_USER: ${POSTGRES_USER:-IEEE-UCF-Discord-Bot}
   #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
   #   volumes:
   #     - postgres_data:/var/lib/postgresql/data
   #   ports:
   #     - "5432:5432"
   #   networks:
-  #     - larry-network
+  #     - bot-network
 
 # volumes:
 #   postgres_data:

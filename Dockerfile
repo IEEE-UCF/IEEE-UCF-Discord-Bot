@@ -14,14 +14,14 @@ RUN bun install --frozen-lockfile --production
 COPY . .
 
 # Create a non-root user
-RUN addgroup -g 1001 -S larry && \
-    adduser -S larry -u 1001 -G larry
+RUN addgroup -g 1001 -S discordbot && \
+    adduser -S discordbot -u 1001 -G discordbot
 
 # Change ownership of the app directory
-RUN chown -R larry:larry /app
+RUN chown -R discordbot:discordbot /app
 
 # Switch to non-root user
-USER larry
+USER discordbot
 
 # Start the bot
 CMD ["bun", "run", "main.ts"]

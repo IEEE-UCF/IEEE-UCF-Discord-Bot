@@ -1,5 +1,5 @@
 {
-  "name": "larry",
+  "name": "ieee-ucf-discord-bot",
   "version": "1.0.0",
   "private": true,
   "description": "IEEE@UCF Discord Bot",
@@ -13,13 +13,13 @@
     "typescript",
     "bun"
   ],
-  "homepage": "https://github.com/IEEE-UCF/Larry#readme",
+  "homepage": "https://github.com/IEEE-UCF/IEEE-UCF-Discord-Bot",
   "bugs": {
-    "url": "https://github.com/IEEE-UCF/Larry/issues"
+    "url": "https://github.com/IEEE-UCF/IEEE-UCF-Discord-Bot/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/IEEE-UCF/Larry.git"
+    "url": "git+https://github.com/IEEE-UCF/IEEE-UCF-Discord-Bot.git"
   },
   "license": "MIT",
   "author": "IEEE@UCF Software Committee",
@@ -33,8 +33,8 @@
     "lint:fix": "eslint . --fix",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "docker:build": "docker build -t larry-bot .",
-    "docker:run": "docker run larry-bot",
+    "docker:build": "docker build -t discord-bot .",
+    "docker:run": "docker run discord-bot",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f"
