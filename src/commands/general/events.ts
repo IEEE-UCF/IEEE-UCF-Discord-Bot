@@ -49,11 +49,10 @@ export class EventsCommand extends Command {
 				return result.trim() || '<1m';
 			};
 
-			// Limit to first 5 events
-			const upcomingEvents = eventsThisWeek.slice(0, 5);
+			const upcomingEvents = eventsThisWeek.slice(0, eventsThisWeek.length);
 
 			const embed = new EmbedBuilder()
-				.setTitle('📅 Events This Week')
+				.setTitle('📅  Events This Week')
 				.setColor(this.client.config.embed.color)
 				.setTimestamp()
 				.setFooter({ text: `Showing ${upcomingEvents.length} of ${eventsThisWeek.length} event${eventsThisWeek.length !== 1 ? 's' : ''}` });
@@ -65,7 +64,7 @@ export class EventsCommand extends Command {
 
 				const eventDate = time(event.start as Date, TimestampStyles.ShortDateTime);
 				const relativeTime = time(event.start as Date, TimestampStyles.RelativeTime);
-				const location = event.location ? `📍 ${event.location}` : '📍 TBA';
+				const location = event.location ? `📍 ${event.location}` : '📍 TBA/Check Announcement';
 				const durationText = duration ? `⏱️ ${durationString(duration)}` : '';
 
 				const fieldValue = [
