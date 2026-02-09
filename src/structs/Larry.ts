@@ -11,7 +11,7 @@ import { Utils, PermissionLevel } from '../modules/helpers/Utils.ts';
 import * as schema from '../modules/database/Schema.ts';
 import { Command } from './Command.ts';
 import { Event } from './Event.ts';
-import { Tomfoolery } from '../modules/tomfoolery/main.ts';
+import { eventsAutomation } from '../modules/calendar/eventsAutomation.ts';
 
 interface CachedPermission {
 	level: PermissionLevel;
@@ -25,7 +25,7 @@ class Larry extends Client {
 	public logger: any;
 	public database: Database;
 	public calendar: any;
-	public tomfoolery: Tomfoolery;
+	public eventsAutomation: eventsAutomation;
 	public utils: Utils;
 	private permissionCache: Collection<string, CachedPermission>;
 	private readonly CACHE_TTL = 10 * 60 * 1000; // 10 minutes
@@ -43,7 +43,7 @@ class Larry extends Client {
 		this.logger = new logger(this);
 		this.database = new Database(this, this.config.postgres);
 		this.calendar = new Calendar(this, this.config.calendarURLs);
-		this.tomfoolery = new Tomfoolery(this);
+		this.eventsAutomation = new eventsAutomation(this);
 		this.utils = new Utils(this);
 		this.permissionCache = new Collection();
 
@@ -278,11 +278,12 @@ class Larry extends Client {
 				this.logger.log('Started refreshing application (/) commands.');
 			}
 
-			// Register commands globally
+			// Register commands w/ Discord
 			await rest.put(
 				Routes.applicationCommands(this.getClientId()),
 				{ body: commands },
 			);
+			console.log('Global commands registered');
 
 			if (this.config.debug) {
 				this.logger.success('Successfully reloaded application (/) commands.');
@@ -350,7 +351,7 @@ class Larry extends Client {
 		if (this.config.debug) this.logger.success(`Process started - Runtime ${process.version}`);
 
 		// Connect to database
-		await this.database.loadDatabase();
+		// await this.database.loadDatabase();
 
 		// Load commands and events
 		await this.loadCommands();
@@ -361,6 +362,7 @@ class Larry extends Client {
 			.then(() => {
 				if (this.config.debug) this.logger.success('Client logged in: ' + this.user?.tag);
 			})
+
 			.catch((error: Error) => {
 				this.logger.fail(`Client failed to login: ${error}`);
 				process.exit(1);
@@ -395,7 +397,10 @@ class Larry extends Client {
 	}
 
 	override async destroy(): Promise<void> {
-		await this.database.closeDatabase();
+
+		this.eventsAutomation.stop();
+		await this.eventsAutomation.cleanupOnShutdown();
+		//await this.database.closeDatabase();
 		await super.destroy();
 		this.logger.shutdown('Client destroyed and database connection closed.');
 	}

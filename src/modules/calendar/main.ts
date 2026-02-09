@@ -14,43 +14,47 @@ export class Calendar {
 		const allEvents: any[] = [];
 
 		for (const calendarURL of this.calendars) {
-			const response = await axios.get(calendarURL);
+			const response = await axios.get(calendarURL, { responseType: 'text' });
 			const ics = ical.parseICS(response.data);
 
 			const now = new Date();
 			const futureLimit = new Date();
-			futureLimit.setMonth(futureLimit.getMonth() + 3); // Next 3 months
+			futureLimit.setMonth(futureLimit.getMonth() + 3);
 
 			const events: any[] = [];
 
 			for (const event of Object.values(ics)) {
-				if (event.type === 'VEVENT') {
-					if (event.rrule) {
-						// Expand recurring events
-						const dates = event.rrule.between(now, futureLimit, true);
-						for (const date of dates) {
-							// Exclude EXDATEs
-							if (event.exdate?.[date.toISOString()]) continue;
-							events.push({
-								...event,
-								start: date,
-								end: new Date(date.getTime() + (event.end.getTime() - event.start.getTime())),
-							});
-						}
-					} else if (event.start > now) {
-						events.push(event);
+				if (event.type !== 'VEVENT') continue;
+
+				if (event.rrule) {
+					const duration = event.end.getTime() - event.start.getTime();
+					const baseStart = event.start;
+					const rangeStart = new Date(now);
+					rangeStart.setHours(0, 0, 0, 0);
+
+					const dates = event.rrule.between(rangeStart, futureLimit, true);
+
+					for (const date of dates) {
+						const exKey = new Date(date);
+						exKey.setHours(baseStart.getHours(), baseStart.getMinutes(), baseStart.getSeconds(), baseStart.getMilliseconds());
+						if (event.exdate?.[exKey.toISOString()]) continue;
+
+						const start = new Date(date);
+						start.setHours(baseStart.getHours(), baseStart.getMinutes(), baseStart.getSeconds(), baseStart.getMilliseconds());
+						const end = new Date(start.getTime() + duration);
+
+						events.push({ ...event, start, end });
 					}
+				} else if (event.start >= now) {
+					events.push(event);
 				}
 			}
 
 			allEvents.push(...events);
 		}
 
-		// Sort all events by start date
 		return allEvents.sort((a: any, b: any) => {
-			if (a.start && b.start) {
-				return (a.start as Date).getTime() - (b.start as Date).getTime();
-			}
+			if (a.start && b.start) return (a.start as Date).getTime() - (b.start as Date).getTime();
 			return 0;
 		});
 	}

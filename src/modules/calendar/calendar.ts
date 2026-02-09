@@ -18,6 +18,7 @@ async function fetchCalendarEvents() {
 			if (event.rrule) {
 				// Expand recurring events
 				const dates = event.rrule.between(now, futureLimit, true);
+
 				for (const date of dates) {
 					// Exclude EXDATEs
 					if (event.exdate?.[date.toISOString()]) continue;
@@ -27,6 +28,7 @@ async function fetchCalendarEvents() {
 						end: new Date(date.getTime() + (event.end.getTime() - event.start.getTime())),
 					});
 				}
+				
 			} else if (event.start > now) {
 				events.push(event);
 			}
