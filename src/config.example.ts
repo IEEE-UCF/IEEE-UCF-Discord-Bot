@@ -7,6 +7,12 @@ interface Config {
 			id: string;
 			channels: {
 				calendar: string;
+				reminders: string;
+			};
+			eventReminders: {
+				enabled: boolean;
+				reminderMinutes: number;
+				roleToPing: string;
 			};
 		};
 		dev: {
@@ -34,29 +40,7 @@ interface Config {
 	debug: boolean;
 	intents: GatewayIntentBits[];
 	partials: Partials[];
-	tomfoolery: {
-		trollResponse: {
-			enabled: boolean;
-			default: {
-				responses: string[];
-				chance: number;
-				deleteTime: number;
-			};
-			members: Record<string, {
-				responses: string[];
-				chance: number;
-				deleteTime: number;
-			}>;
-			keywords: Record<string, {
-				responses: string[];
-				deleteTime: number;
-			}>;
-			disabled: {
-				channels: string[];
-				users: string[];
-			};
-		};
-	};
+
 	custom: Record<string, any>;
 }
 
@@ -68,6 +52,12 @@ const config: Config = {
 			id: '',
 			channels: {
 				calendar: '',
+				reminders: '',
+			},
+			eventReminders: {
+				enabled: false,
+				reminderMinutes: 0,
+				roleToPing: '',
 			},
 		},
 		dev: {
@@ -81,7 +71,7 @@ const config: Config = {
 
 	embed: {
 		color: '#FFD61A',
-		footer: 'Larry | IEEE@UCF Software Committee',
+		footer: 'IEEE@UCF Discord Bot',
 	},
 
 	postgres: '',
@@ -126,36 +116,6 @@ const config: Config = {
 		Partials.ThreadMember,
 		Partials.SoundboardSound,
 	],
-
-	tomfoolery: {
-		trollResponse: {
-			enabled: false,
-			default: {
-				responses: [
-					'https://tenor.com/view/speech-bubble-speech-dog-meme-gif-25299613',
-				],
-				chance: 0.1,
-				deleteTime: 500,
-			},
-			members: {
-				// 'MEMBER_ID_HERE': {
-				// 	responses: ['no way', 'stop it', 'https://example.com/gif1.gif'],
-				// 	chance: 0.1,
-				// 	deleteTime: 500,
-				// },
-			},
-			keywords: {
-				// keyword: {
-				// 	responses: ['triggered!', 'https://example.com/gif.gif'],
-				// 	deleteTime: 1000,
-				// },
-			},
-			disabled: {
-				channels: [],
-				users: [],
-			},
-		},
-	},
 
 	custom: {},
 };
