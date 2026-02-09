@@ -8,7 +8,7 @@ export class ReadyEvent extends Event {
 		});
 	}
 
-	run(): void {
+	async run() {
 		console.log(`🤖 ${this.client.user?.tag} is online and ready!`);
 		// console.log(`📊 Serving ${this.client.guilds.cache.size} guild(s)`);
 		// console.log(`👥 Connected to ${this.client.users.cache.size} user(s)`);
@@ -18,6 +18,8 @@ export class ReadyEvent extends Event {
 			name: this.client.config.status.name,
 			type: this.client.config.status.type,
 		});
+
+		await this.client.eventsAutomation.start();
 
 		// Clean permission cache periodically
 		setInterval(() => {

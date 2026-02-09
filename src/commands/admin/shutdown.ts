@@ -17,7 +17,7 @@ export class ShutdownCommand extends Command {
 
 	async run(interaction: ChatInputCommandInteraction): Promise<void> {
 		const embed = this.client.createEmbed()
-			.setTitle('🔴 **Bot is now shutting down.**')
+			.setTitle('🔴  **Bot is now shutting down.**')
 			.setFooter({
 				text: `Requested by ${interaction.user.username} • ${this.client.config.embed.footer}`,
 				iconURL: interaction.user.displayAvatarURL({ size: 1024 }),

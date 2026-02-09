@@ -12,7 +12,5 @@ export class MessageCreateEvent extends Event {
 	async run(message: Message): Promise<void> {
 		// Ignore messages from bots
 		if (message.author?.bot) return;
-		// console.log(this);
-		await this.client.tomfoolery.trollResponse(message);
 	}
 }

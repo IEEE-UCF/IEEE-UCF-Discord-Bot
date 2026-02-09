@@ -4,7 +4,7 @@ import {
 	Collection,
 	EmbedBuilder,
 } from 'discord.js';
-import type { PermissionResolvable } from 'discord.js';
+import type { PermissionResolvable, SlashCommandOptionsOnlyBuilder } from 'discord.js';
 import { PermissionLevel } from '../modules/helpers/Utils.ts';
 
 export interface CommandOptions {
@@ -59,7 +59,7 @@ export abstract class Command {
 	/**
 	 * Build the slash command
 	 */
-	abstract command(): SlashCommandBuilder;
+	abstract command(): SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
 
 	/**
 	 * Check if user is on cooldown
