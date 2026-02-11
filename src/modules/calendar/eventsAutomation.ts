@@ -123,7 +123,7 @@ export class eventsAutomation {
             .setTitle('📅  Events This Week')
             .setColor(this.client.config.embed.color)
             .setTimestamp()
-            .setFooter({ text: `Last updated • ${this.client.config.embed.footer}` });
+            .setFooter({ text: `${this.client.config.embed.footer}` });
 
         for (const event of upcomingEvents) {
             const duration = event.end && event.start
@@ -214,7 +214,7 @@ export class eventsAutomation {
 				)
 				.setColor('#FF6B6B'); // Red/orange for urgency - not IEEE hex code? lmao
 
-			const content = roleToPing ? `<@&${roleToPing}>` : '@everyone';
+			const content = roleToPing ? `<@&${roleToPing}>` : '';
 			const message = await channel.send({ content, embeds: [embed] });
 
 			// Track this reminder

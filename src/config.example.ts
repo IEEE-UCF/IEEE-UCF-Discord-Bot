@@ -8,12 +8,14 @@ interface Config {
 			channels: {
 				calendar: string;
 				reminders: string;
+				reminderRole: string;
+				assistance: string;
 			};
 			eventReminders: {
 				enabled: boolean;
 				reminderMinutes: number;
-				roleToPing: string;
 			};
+			assistanceRole: string;
 		};
 		dev: {
 			id: string;
@@ -53,12 +55,14 @@ const config: Config = {
 			channels: {
 				calendar: '',
 				reminders: '',
+				reminderRole: '',
+				assistance: '',
 			},
 			eventReminders: {
 				enabled: false,
 				reminderMinutes: 0,
-				roleToPing: '',
 			},
+			assistanceRole: '',
 		},
 		dev: {
 			id: '',

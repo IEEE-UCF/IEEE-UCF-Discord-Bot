@@ -26,7 +26,7 @@
   "type": "module",
   "main": "main.ts",
   "scripts": {
-    "start": "bun run main.ts",
+    "start": "bun run --no-watch main.ts",
     "dev": "bun --watch main.ts",
     "build": "bun build main.ts --outdir ./dist",
     "lint": "eslint .",
