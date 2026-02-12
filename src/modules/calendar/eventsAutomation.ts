@@ -203,14 +203,14 @@ export class eventsAutomation {
 			if (!channel?.isTextBased()) return;
 
 			const reminderHours = this.client.config.servers.main.eventReminders.reminderMinutes / 60;
-			const roleToPing = this.client.config.servers.main.eventReminders.roleToPing;
+			const roleToPing = this.client.config.servers.main.roleToPing;
 
 			const embed = this.client.createEmbed()
-				.setTitle(`⏰ Event Starting in ${reminderHours} hour!`)
+				.setTitle(`⏰  Event Starting in ${reminderHours} hour!`)
 				.setDescription(`**${event.summary ?? 'Untitled Event'}** is starting soon!`)
 				.addFields(
-					{ name: '📅 Start Time', value: time(event.start as Date, TimestampStyles.LongDateTime), inline: true },
-					{ name: '📍 Location', value: event.location || 'TBA', inline: true }
+					{ name: '📅  Start Time', value: time(event.start as Date, TimestampStyles.LongDateTime), inline: true },
+					{ name: '📍 Location', value: event.location || 'Check Announcement', inline: true }
 				)
 				.setColor('#FF6B6B'); // Red/orange for urgency - not IEEE hex code? lmao
 

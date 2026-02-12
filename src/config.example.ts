@@ -8,14 +8,15 @@ interface Config {
 			channels: {
 				calendar: string;
 				reminders: string;
-				reminderRole: string;
 				assistance: string;
 			};
 			eventReminders: {
 				enabled: boolean;
 				reminderMinutes: number;
 			};
-			assistanceRole: string;
+			reminderRole: string;
+			assistanceRoleAdmin: string;
+			assistanceRoleSoftware: string;
 		};
 		dev: {
 			id: string;
@@ -55,14 +56,15 @@ const config: Config = {
 			channels: {
 				calendar: '',
 				reminders: '',
-				reminderRole: '',
 				assistance: '',
 			},
 			eventReminders: {
 				enabled: false,
 				reminderMinutes: 0,
 			},
-			assistanceRole: '',
+			reminderRole: '',
+			assistanceRoleAdmin: '',
+			assistanceRoleSoftware: '',
 		},
 		dev: {
 			id: '',
@@ -74,8 +76,8 @@ const config: Config = {
 	},
 
 	embed: {
-		color: '#FFD61A',
-		footer: 'IEEE@UCF Discord Bot',
+		color: '#ffd100',
+		footer: 'IEEE @ UCF Discord Bot',
 	},
 
 	postgres: '',
