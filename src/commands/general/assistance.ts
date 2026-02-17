@@ -6,7 +6,7 @@ export class assistanceCommand extends Command {
 	constructor(client: any) {
 		super(client, {
 			name: 'assistance', 
-			description: 'Sends an assistance request to a predetermined channel', 
+			description: 'Sends an assistance request.', 
 			usage: 'assistance <type> <title> <summary>', 
 			category: 'general',
 			permissionLevel: PermissionLevel.GUEST,
