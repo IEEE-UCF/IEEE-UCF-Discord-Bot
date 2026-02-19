@@ -27,9 +27,8 @@ export class Greetings extends Event {
             const dmEmbed = new EmbedBuilder()
                 .setColor(this.client.config.embed.color)
                 .setTitle('Welcome to IEEE UCF!')
-                .setDescription(`Thanks for joining the **IEEE @ UCF** Discord server. Here are a few things to get started:\n\n` +
-                                `* Check out the rules!` +
-                                `* Introduce yourself :)`
+                .setDescription(`Thanks for joining the **IEEE @ UCF** Discord server. Here are a few things to get started:\n` +
+                                `IEEE UCF is the University of Central Florida’s student chapter of the Institute of Electrical and Electronics Engineers, focused on helping students grow in engineering, computer science, professionalism, and service. The organization hosts workshops, meetings, career events, and long-term projects that give members hands-on experience and opportunities to present research https://ieee.cecs.ucf.edu/\n\n`
                 )
                 .setFooter({ text: this.client.config.embed.footer})
                 .setTimestamp();
