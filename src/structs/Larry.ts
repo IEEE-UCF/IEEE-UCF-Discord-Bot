@@ -107,8 +107,8 @@ class Larry extends Client {
 			}
 
 			// Get member data with relations
-			const member = await this.database.getDB().query.Members.findFirst({
-				where: eq(schema.Members.discordID, discordId),
+			const member = await this.database.getDB().query.members.findFirst({
+				where: eq(schema.members.discordId, discordId),
 				with: {
 					committeeMembers: {
 						with: {
@@ -131,7 +131,7 @@ class Larry extends Client {
 
 			// Executive roles (specific officer roles)
 			if (member.officerStatus && member.officerRole) {
-				const executiveRoles = ['executive_chair', 'executive_vice_chair', 'executive_secretary', 'executive_treasurer'];
+				const executiveRoles = ['Executive Chair', 'Vice Chair', 'Secretary', 'Treasurer'];
 				if (executiveRoles.includes(member.officerRole)) {
 					return PermissionLevel.EXECUTIVE;
 				}
@@ -351,7 +351,7 @@ class Larry extends Client {
 		if (this.config.debug) this.logger.success(`Process started - Runtime ${process.version}`);
 
 		// Connect to database
-		// await this.database.loadDatabase();
+		await this.database.loadDatabase();
 
 		// Load commands and events
 		await this.loadCommands();
@@ -400,7 +400,7 @@ class Larry extends Client {
 
 		this.eventsAutomation.stop();
 		await this.eventsAutomation.cleanupOnShutdown();
-		//await this.database.closeDatabase();
+		await this.database.closeDatabase();
 		await super.destroy();
 		this.logger.shutdown('Client destroyed and database connection closed.');
 	}

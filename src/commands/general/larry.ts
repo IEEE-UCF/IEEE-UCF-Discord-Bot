@@ -6,7 +6,7 @@ export class LarryCommand extends Command {
     constructor(client: any) {
         super(client, {
             name: 'larry',
-            description: 'Displays a gif of Larry',
+            description: 'Displays a gif of Larry.',
             usage: 'larry',
             category: 'general',
             permissionLevel: PermissionLevel.GUEST,
