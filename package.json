@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@eslint/js": "^9.38.0",
-    "axios": "^1.13.1",
+    "axios": "^1.13.5",
     "colors": "^1.4.0",
     "discord.js": "^14.24.2",
     "drizzle-kit": "^0.31.6",
