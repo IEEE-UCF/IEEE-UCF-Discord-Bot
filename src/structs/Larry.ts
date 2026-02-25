@@ -209,9 +209,19 @@ class Larry extends Client {
 	/**
 	 * Get files matching a pattern
 	 */
-	getFiles(dir: string, ext: string): Promise<string[]> {
-		const pattern = path.join(this.directory, '..', dir, '**', `*${ext}`);
-		return glob(pattern);
+	async getFiles(dir: string, ext: string): Promise<string[]> {
+		const raw = path.join(this.directory, '..', dir, '**', `*${ext}`);
+		const directory = raw.replace(/\\/g, '/'); // normalize for glob on Windows
+		try {
+			const matches = await glob(directory);
+				if (matches.length === 0) {
+					this.logger.warn(`Found no command files in ${directory}`);
+				}
+			return matches;
+		} catch (err) {
+			this.logger.fail(`Error finding command files in ${directory}: ${err}`);
+			return [];
+		}
 	}
 
 	/**
