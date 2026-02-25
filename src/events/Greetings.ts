@@ -35,7 +35,7 @@ export class Greetings extends Event {
 
             await member.send({ embeds: [dmEmbed] });
         } catch(error) {
-            console.log(`Could not ${member.user.tag}: ${error}`)
+            console.log(`Could not DM ${member.user.tag}: ${error}`)
         }
     }
 }
