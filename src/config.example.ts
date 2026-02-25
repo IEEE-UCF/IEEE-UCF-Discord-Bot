@@ -9,6 +9,7 @@ interface Config {
 				calendar: string;
 				reminders: string;
 				assistance: string;
+				general: string;
 			};
 			eventReminders: {
 				enabled: boolean;
@@ -57,6 +58,7 @@ const config: Config = {
 				calendar: '',
 				reminders: '',
 				assistance: '',
+				general: '',
 			},
 			eventReminders: {
 				enabled: false,
