@@ -1,6 +1,6 @@
-# IEEE@UCF Discord Bot (f.k.a. Larry)
+# IEEE @ UCF Discord Bot (f.k.a. Larry)
 
-A silly Discord bot built with TypeScript, Bun, and Discord.js for the IEEE@UCF community.
+A Discord bot built with TypeScript, Bun, and Discord.js for the IEEE @ UCF community.
 
 <img src="assets/images/larry.gif" alt="Larry" style="width: 200px; height: 200px; object-fit: cover;" />
 
@@ -25,4 +25,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-For support or questions, contact the IEEE@UCF Software Committee or open an issue on GitHub.
+For support or questions, contact the IEEE @ UCF Software Committee or open an issue on GitHub.

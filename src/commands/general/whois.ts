@@ -8,7 +8,7 @@ export class WhoisCommand extends Command {
 	constructor(client: any) {
 		super(client, {
 			name: 'whois',
-			description: 'Get detailed information about a member.',
+			description: 'Gets detailed information about a member.',
 			usage: 'whois <name>',
 			category: 'general',
 			permissionLevel: PermissionLevel.GUEST,

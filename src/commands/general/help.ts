@@ -17,7 +17,7 @@ export class HelpCommand extends Command {
 
 	async run(interaction: ChatInputCommandInteraction): Promise<void> {
 		const embed = this.client.createEmbed()
-			.setTitle('Welcome to IEEE UCF!')
+			.setTitle('Welcome to IEEE @ UCF!')
 			.setAuthor({
 				name: this.client.user?.username ?? 'Larry',
 				iconURL: this.client.user?.displayAvatarURL({ size: 512 }) ?? undefined,
