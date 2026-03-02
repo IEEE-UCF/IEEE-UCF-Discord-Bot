@@ -58,7 +58,7 @@ export class HelpCommand extends Command {
 			const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
 
 			embed.addFields({
-				name: `${categoryName}`,
+				name: `${categoryName} Commands`,
 				value: commandList || 'No commands',
 			});
 		});
