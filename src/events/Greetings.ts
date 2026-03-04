@@ -17,7 +17,7 @@ export class Greetings extends Event {
         if (generalChannel?.isTextBased()) {
             const serverEmbed = this.client.createEmbed()
                 .setTitle('Welcome to the IEEE @ UCF Discord Server!')
-                .setDescription(`Hello ${member.user}, Welcome to the IEEE @ UCF Discord Server! Please make sure to read the rules, check out the server guide, and enjoy your stay!`)
+                .setDescription(`Hello ${member.user}, Welcome to the IEEE @ UCF Discord Server! Please make sure to read the rules, check out the server guide, and enjoy your stay! Use the /help command to get started`)
                 .setThumbnail(member.user.displayAvatarURL({ size: 256 }))
             
             await generalChannel.send({ embeds: [serverEmbed] }).catch(console.error);
