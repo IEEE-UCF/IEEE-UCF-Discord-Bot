@@ -1,4 +1,7 @@
+import { enabled } from 'colors';
 import { GatewayIntentBits, Partials, ActivityType } from 'discord.js';
+import { boolean } from 'drizzle-orm/gel-core';
+import { createEmitAndSemanticDiagnosticsBuilderProgram } from 'typescript';
 
 interface Config {
 	token: string;
@@ -10,6 +13,10 @@ interface Config {
 				reminders: string;
 				assistance: string;
 				general: string;
+			};
+			eventsAutomation: {
+				enabled: boolean;
+				updateIntervalMinutes: number;
 			};
 			eventReminders: {
 				enabled: boolean;
@@ -59,6 +66,10 @@ const config: Config = {
 				reminders: '',
 				assistance: '',
 				general: '',
+			},
+			eventsAutomation: {
+				enabled: false,
+				updateIntervalMinutes: 30,
 			},
 			eventReminders: {
 				enabled: false,

@@ -173,7 +173,9 @@ export class WhoisCommand extends Command {
 				});
 			}
 
-			await interaction.editReply({ embeds: [embed] });
+			await interaction.editReply({ 
+				content: `<@${member.discordId}>`,
+				embeds: [embed] });
 		} catch (error) {
 			this.client.logger.fail(`Error fetching member info: ${error}`);
 			console.error(error);
