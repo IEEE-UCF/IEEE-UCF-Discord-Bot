@@ -26,13 +26,20 @@ export class eventsAutomation {
 		if (this.started) return;
 		this.started = true;
 
+		// Check if automation is enabled
+		if (!this.client.config.servers.main.eventsAutomation.enabled) {
+			this.client.logger.log('Events automation is disabled in config');
+			return;
+		}
+
 		// Post initial weekly board
 		await this.updateWeeklyBoard();
 
-		// Update weekly board every 30 minutes
+		// Update weekly board based on config interval
+		const intervalMinutes = this.client.config.servers.main.eventsAutomation.updateIntervalMinutes;
 		this.updateInterval = setInterval(async () => {
 			await this.updateWeeklyBoard();
-		}, 30 * 60 * 1000);
+		}, intervalMinutes * 60 * 1000);
 
 		// Check for upcoming events every 5 minutes
 		this.reminderCheckInterval = setInterval(async () => {
