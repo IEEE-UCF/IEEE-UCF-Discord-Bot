@@ -40,6 +40,7 @@
     "docker:logs": "docker compose logs -f"
   },
   "dependencies": {
+    "@discordjs/opus": "^0.10.0",
     "@discordjs/voice": "^0.19.0",
     "@eslint/js": "^9.38.0",
     "axios": "^1.13.5",
