@@ -9,7 +9,9 @@ export class ReadyEvent extends Event {
 	}
 
 	async run() {
+		console.log("\n");
 		console.log(`🤖 ${this.client.user?.tag} is online and ready!`);
+		console.log("\n")
 		// console.log(`📊 Serving ${this.client.guilds.cache.size} guild(s)`);
 		// console.log(`👥 Connected to ${this.client.users.cache.size} user(s)`);
 

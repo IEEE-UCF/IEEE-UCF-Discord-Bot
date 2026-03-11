@@ -28,7 +28,7 @@ export class eventsAutomation {
 
 		// Check if automation is enabled
 		if (!this.client.config.servers.main.eventsAutomation.enabled) {
-			this.client.logger.log('Events automation is disabled in config');
+			this.client.logger.log('Events automation is disabled in config.');
 			return;
 		}
 
@@ -46,7 +46,7 @@ export class eventsAutomation {
 			await this.checkUpcomingEvents();
 		}, 5 * 60 * 1000);
 
-		this.client.logger.success('Events automation started');
+		this.client.logger.success('Events automation started.');
 	}
 
 	/**
@@ -55,7 +55,9 @@ export class eventsAutomation {
 	stop() {
 		if (this.updateInterval) clearInterval(this.updateInterval);
 		if (this.reminderCheckInterval) clearInterval(this.reminderCheckInterval);
-		this.client.logger.log('Events automation stopped');
+		if (this.started) {
+			this.client.logger.log('Events automation stopped.');
+		}
 	}
 
 	/**
@@ -65,13 +67,13 @@ export class eventsAutomation {
 		try {
 			const channelId = this.client.config.servers.main.channels.calendar;
 			if (!channelId) {
-				this.client.logger.fail('Calendar channel not configured');
+				this.client.logger.fail('Calendar channel not configured.');
 				return;
 			}
 
 			const channel = this.client.channels.cache.get(channelId) as TextChannel;
 			if (!channel?.isTextBased()) {
-				this.client.logger.fail('Calendar channel not found or not a text channel');
+				this.client.logger.fail('Calendar channel not found or not a text channel.');
 				return;
 			}
 
@@ -86,7 +88,7 @@ export class eventsAutomation {
 			}
 
 			if (this.client.config.debug) {
-				this.client.logger.log('Weekly events board updated');
+				this.client.logger.log('Weekly events board updated.');
 			}
 		} catch (error) {
 			this.client.logger.fail(`Error updating weekly board: ${error}`);
@@ -268,7 +270,7 @@ export class eventsAutomation {
 			// Delete weekly board
 			if (this.weeklyBoardMessage) {
 				await this.weeklyBoardMessage.delete().catch(() => null);
-				this.client.logger.log('Deleted weekly board message on shutdown');
+				this.client.logger.log('Deleted weekly board message on shutdown.');
 			}
 
 			// Delete all active reminders
@@ -284,7 +286,7 @@ export class eventsAutomation {
 				this.activeReminders.delete(eventId);
 			}
 
-			this.client.logger.log('Cleaned up reminders on shutdown');
+			this.client.logger.log('Cleaned up reminders on shutdown.');
 		} catch (err) {
 			this.client.logger.fail(`Error during shutdown cleanup: ${err}`);
 		}

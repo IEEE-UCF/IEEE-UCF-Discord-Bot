@@ -271,7 +271,7 @@ class Larry extends Client {
 
 			// Register slash commands with Discord
 			await this.registerSlashCommands(slashCommands);
-			this.logger.success(`Loaded ${this.commands.size} slash commands`);
+			this.logger.success(`Loaded ${this.commands.size} slash commands.`);
 		} catch (error) {
 			this.logger.fail(`Error loading commands: ${error}`);
 		}
@@ -293,7 +293,8 @@ class Larry extends Client {
 				Routes.applicationCommands(this.getClientId()),
 				{ body: commands },
 			);
-			console.log('Global commands registered');
+			// console.log('Global commands registered');
+			this.logger.success('Global commands registered.');
 
 			if (this.config.debug) {
 				this.logger.success('Successfully reloaded application (/) commands.');
@@ -347,7 +348,7 @@ class Larry extends Client {
 				}
 			}
 
-			this.logger.success(`Loaded ${this.events.size} events`);
+			this.logger.success(`Loaded ${this.events.size} events.`);
 		} catch (error) {
 			this.logger.fail(`Error loading events: ${error}`);
 		}
