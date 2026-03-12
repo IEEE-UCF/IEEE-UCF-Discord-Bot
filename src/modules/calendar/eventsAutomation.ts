@@ -22,15 +22,15 @@ export class eventsAutomation {
 	 * Start the automation system
 	 */
 	async start() {
-		this.client.logger.log('Starting events automation...');
-		if (this.started) return;
-		this.started = true;
-
 		// Check if automation is enabled
 		if (!this.client.config.servers.main.eventsAutomation.enabled) {
 			this.client.logger.log('Events automation is disabled in config.');
 			return;
 		}
+
+		this.client.logger.log('Starting events automation...');
+		if (this.started) return;
+		this.started = true;
 
 		// Post initial weekly board
 		await this.updateWeeklyBoard();

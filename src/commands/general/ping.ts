@@ -19,29 +19,37 @@ export class PingCommand extends Command {
 	}
 
 	async run(interaction: ChatInputCommandInteraction): Promise<void> {
-		const currentRTT = Date.now() - interaction.createdTimestamp;
+
+		// Use deferReply to measure accurate RTT
+		const sent = await interaction.deferReply({ fetchReply: true });
+
+		const currentRTT = sent.createdTimestamp - interaction.createdTimestamp;
 		const currentHeartbeat = Math.round(this.client.ws.ping);
 
-		// Get previous values for this user
 		const previous = previousPings.get(interaction.user.id);
 
-		// Calculate differences
 		let rttText = `🔂 **RTT**: ${currentRTT} ms`;
 		let heartbeatText = `💟 **Heartbeat**: ${currentHeartbeat} ms`;
 
 		if (previous) {
 			const rttDiff = currentRTT - previous.rtt;
-			const heartbeatDiff = currentHeartbeat - previous.heartbeat;
+			const hbDiff = currentHeartbeat - previous.heartbeat;
 
-			// Add comparison arrows and colors
-			const rttArrow = rttDiff > 0 ? ` +${rttDiff}` : rttDiff < 0 ? ` ${rttDiff}` : ' ±0';
-			const hbArrow = heartbeatDiff > 0 ? ` +${heartbeatDiff}` : heartbeatDiff < 0 ? ` ${heartbeatDiff}` : ' ±0';
+			const rttArrow =
+				rttDiff > 0 ? ` +${rttDiff}` :
+				rttDiff < 0 ? ` ${rttDiff}` :
+				' ±0';
+
+			const hbArrow =
+				hbDiff > 0 ? ` +${hbDiff}` :
+				hbDiff < 0 ? ` ${hbDiff}` :
+				' ±0';
 
 			rttText += ` (${rttArrow} ms )`;
 			heartbeatText += ` (${hbArrow} ms )`;
 		}
 
-		// Store current values for next time
+		// Store current values
 		previousPings.set(interaction.user.id, {
 			rtt: currentRTT,
 			heartbeat: currentHeartbeat,
@@ -50,13 +58,16 @@ export class PingCommand extends Command {
 		const embed = this.client.createEmbed()
 			.setThumbnail(this.client.user?.displayAvatarURL() ?? null)
 			.setTitle(`${this.client.user?.username ?? 'Larry'} Ping`)
-			.setDescription([rttText, heartbeatText].join('\n'))
+			.setDescription([
+				rttText,
+				heartbeatText,
+			].join('\n'))
 			.setFooter({
 				text: `Requested by ${interaction.user.username} • ${this.client.config.embed.footer}`,
 				iconURL: interaction.user.displayAvatarURL({ size: 1024 }),
 			});
 
-		await interaction.reply({
+		await interaction.editReply({
 			embeds: [embed],
 		});
 	}
