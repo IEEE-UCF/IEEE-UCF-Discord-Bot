@@ -20,10 +20,11 @@ export class PingCommand extends Command {
 
 	async run(interaction: ChatInputCommandInteraction): Promise<void> {
 
-		// Use deferReply to measure accurate RTT
-		const sent = await interaction.deferReply({ fetchReply: true });
+		// updated for more accurate RTT
+		const start = Date.now();
+		await interaction.deferReply();
+		const currentRTT = Date.now() - start;
 
-		const currentRTT = sent.createdTimestamp - interaction.createdTimestamp;
 		const currentHeartbeat = Math.round(this.client.ws.ping);
 
 		const previous = previousPings.get(interaction.user.id);
